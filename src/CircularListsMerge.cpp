@@ -32,7 +32,74 @@ struct node{
 	int data;
 	struct node *next;
 };
+
+int findLen(struct node *head) {
+	struct node *temp = head;
+	int len = 0;
+	if (head == NULL)
+		return len;
+	while (temp->next != head) {
+		temp = temp->next;
+		len++;
+	}
+	len++;
+	return len;
+}
+
+void makeNull(struct  node *head) {
+	struct node *temp = head;
+	while (temp->next != head) {
+		temp = temp->next;
+	}
+	temp->next = NULL;
+}
+
 int merge_circularlists(struct node **head1, struct node **head2){
 	//Returns Length of merged Sorted circular SLL and also points *head1 to final SLL .
-	return -1;
+	if (*head1 == NULL && *head2 == NULL)
+		return -1;
+	if (*head1 == NULL) {
+		head1 = head2;
+		return findLen(*head2);
+	}
+	if (*head2 == NULL) {
+		return findLen(*head1);
+	}
+	makeNull(*head1);
+	makeNull(*head2);
+	struct node *iter1 = *head1;
+	struct node *iter2 = *head2;
+	struct node *head = NULL;
+	struct node *last = NULL;
+	struct node *temp = NULL;
+	while (iter1 != NULL && iter2 != NULL) {
+		if (iter1->data < iter2->data) {
+			temp = iter1;
+			iter1 = iter1->next;
+		}
+		else {
+			temp = iter2;
+			iter2 = iter2->next;
+		}
+		temp->next = NULL;
+		if (head == NULL) {
+			head = temp;
+			last = temp;
+		}
+		else {
+			last->next = temp;
+			last = last->next;
+		}
+	}
+	if (iter1 == NULL && iter2 != NULL) {
+		last->next = iter2;
+	}
+	else {
+		last->next = iter1;
+	}
+	while (last->next != NULL)
+		last = last->next;
+	last->next = head;
+	head1 = &head;
+	return findLen(*head1);
 }
